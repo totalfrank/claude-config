@@ -3,7 +3,6 @@
   "permissions": {
     "allow": [
       "mcp__Notion",
-
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -13,7 +12,6 @@
       "Bash(ls:*)",
       "Bash(rg:*)",
       "Bash(jq:*)",
-
       "Bash(go test:*)",
       "Bash(pytest:*)",
       "Bash(npm test:*)",
@@ -24,10 +22,27 @@
       "mcp__Notion__notion-delete-pages",
       "mcp__Notion__notion-delete-databases",
       "mcp__Notion__notion-delete-comment",
-
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./**/secrets/**)"
+    ]
+  },
+  "effortLevel": "high",
+  "env": {
+    "BASH_DEFAULT_TIMEOUT_MS": "300000",
+    "BASH_MAX_TIMEOUT_MS": "1200000"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.command // empty' | grep -Eq 'git([[:space:]]+-[^[:space:]]+)*[[:space:]]+push\\b.*([[:space:]]--force([[:space:]]|=|$)|[[:space:]]-[a-zA-Z]*f[a-zA-Z]*([[:space:]]|$)|[[:space:]]\\+[^[:space:]]+)' && { echo 'Blocked: use git push --force-with-lease, never --force/-f' >&2; exit 2; } || exit 0"
+          }
+        ]
+      }
     ]
   }
 }
